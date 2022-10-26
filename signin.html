@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <style>
+        body { 
+            background-color: black;
+            background-image: url(midia/building-business.webp);
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 90vh;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-5 mx-auto">
+                <div class="text-light">
+                <h1 class="">WELCOME BACK DEAR USER</h1>
+                <p>Please Signin Here</p>
+                </div>
+                <input type="text" class="form-control" placeholder="Input Email" id="mailInp"><br>
+                <input type="text" class="form-control" placeholder="Input Password" id="passInp"><br>
+
+                <button class="btn btn-warning w-100" onclick="login()">Login</button><br><a href="signup.html">No account yet? create one here</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        
+        const login = ()=>{
+            var lEmail = mailInp.value;
+            var lPassword = passInp.value;
+            let usersStorage = JSON.parse(localStorage.getItem("users"))
+            let check = usersStorage.findIndex(u => u.uEmail == lEmail && u.uPassword == lPassword)
+            if(check < 0){
+                alert("invalid credential")
+            }else{
+                // alert("correct welcome bro")
+                localStorage.setItem('currentUser', lEmail)
+                window.open("dashboard.html", "_self")
+            }
+        }
+    
+            </script>
+</body>
+</html>

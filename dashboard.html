@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head class="bg-light">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+    <style>
+        body { 
+            background-color: black;
+            background-image: url(midia/banking.jpg);
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 90vh;
+        }
+    </style>
+</head>
+    <title>Dashbord for the Fintech</title>
+</head>
+<body onload="fetchDetails()" class="bg-light"> 
+    <div class="container pt-5 mt-5">
+        <div class="row">
+            <div class="col-12">
+                <div class="text-light">
+                <h1 >Welcome, <strong id="username"></strong></h1>
+                <p>Account Number: <b id="acctNumber"></b> Balance: <b id="balance">0</b></p>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <button class="btn btn-danger btn-sm" onclick="signOut()">signout</button><br><br>
+                        <button class="btn btn-danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#depositBox">Make Deposit</button>
+                        <button class="btn btn-danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#transferBox">Make Transfer</button>
+                        <button class="btn btn-danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#withdrawalBox">Make Withdrawal</button>
+                        <button class="btn btn-warning" type="button" data-bs-toggle="offcanvas" data-bs-target="#transferHistoryBox" onclick="tranferHistory()">Transaction History</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="depositBox">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasRightLabel">Make deposit</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button> 
+        </div>
+        <div class="offcanvas-body pt-5">  
+            <label>Amount</label>
+            <input id="dptAmount" placeholder="Enter the amount you want to deposit" class="form-control">
+            <button class="btn btn-danger mt-3" onclick="makeDeposit()">Make deposit</button>
+        </div>
+        </div>
+
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="withdrawalBox">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasRightLabel">Make withdraw</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button> 
+            </div>
+            <div class="offcanvas-body pt-5">  
+                <label>Amount</label>
+                <input id="withdrawAmount" placeholder="Enter the amount you want to deposit" class="form-control">
+                <button class="btn btn-danger mt-3" onclick="makeWithdraw()">Make withdrawal</button>
+            </div>
+            </div>
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="transferBox">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasRightLabel">Make Transfer</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body pt-5">  
+            <label>Amount</label>
+            <input id="trfAmount" placeholder="Enter the amount you want to transfer" class="form-control"><br>  
+            <label>Account Number</label>
+            <input id="trfAccount" onkeyup="checkAccount()" maxlength="10" placeholder="Enter the account number you are to transferring to" class="form-control"><br>
+            <small id="trfName"></small>
+            <button class="btn btn-danger mt-3" onclick="makeTransfer()">Initiate transfer</button>
+        </div>
+        </div>
+
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="transferHistoryBox">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasRightLabel">Transaction History</h5>
+                <button type="button"  class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body pt-5" onload="tranferHistory()">  
+                <!-- <div>You have deposited: <span id="amountTrf"></span> <span>and your new ballance is </span></div>
+                <div id="newBal"></div>
+                <div id="dateTime"></div> -->
+                <table class="table table-striped table-bordered table-hover table-dark">
+                    <thead>
+                        <tr>
+                            <th>S/N</th>
+                            <th>name</th>
+                            <th>email</th>
+                            <th>phone</th>
+                            <th>password</th>
+                            <th>Acct no</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historytable">
+
+                    </tbody>
+                </table>
+            </div>
+            </div>
+    <script>
+        var song1 = new Audio("Access_Bank_-_ONE_DAY_YOU_GO_MAKE_AM.mp3")
+        // var song4 = new Audio("CeCe_Winans_-_Goodness_Of_God_(Official_Audio)(128k).mp3")
+
+        const fetchDetails = ()=>{
+            song1.play();
+            // song4.play();
+            let currentUser = localStorage.getItem("currentUser")
+            if(currentUser){
+                let users = JSON.parse(localStorage.getItem("users"))
+                let details = users.filter(u => u.uEmail == currentUser);
+                username.innerHTML = details[0].uName;
+                acctNumber.innerHTML = details[0].accountNo;
+                balance.innerHTML = details[0].balance;
+            }else{
+                window.open('signin.html','_self')
+            }
+        }
+            let historyArray = []
+
+            const tranferHistory = ()=>{
+                historyArray = JSON.parse(localStorage.getItem("users"))
+                // let currentUserobj = {currentLoginHistory}
+                // historyArray.push(currentLoginHistory)
+                // alert("I dey work")
+                console.log(historyArray);
+                // if(currentLoginHistory){
+                //    let users = JSON.parse(localStorage.getItem("users"));
+                //    let details = users.filter(u => u.uEmail == currentLoginHistory);
+                //    amountTrf.innerHTML = details[0].balance
+                   
+                // }
+                historytable.innerHTML = "";
+                for (let i = 0; i < historyArray.length; i++){
+                historytable.innerHTML += `<tr>
+                <td>${i+1}</td>
+                <td>${historyArray[i].uName}</td>
+                <td>${historyArray[i].uAddress}</td>
+                <td>${historyArray[i].uNumber}</td>
+                <td>${historyArray[i].uEmail}</td>
+                <td>${historyArray[i].accountNo}</td>
+                </tr>`
+            }
+}
+
+        const signOut = ()=>{
+            localStorage.removeItem("currentUser");
+            window.open("signin.html");
+        }
+
+        const makeDeposit = () =>{
+            let currentUser = localStorage.getItem("currentUser")  
+            let amount = dptAmount.value;
+            if(currentUser){
+                let users = JSON.parse(localStorage.getItem("users"));
+                let index = users.findIndex(u => u.uEmail == currentUser);
+                if(confirm('are you sure')){
+                    users[index].balance = parseFloat(users[index].balance) + parseFloat(amount);
+                    localStorage.setItem('users', JSON.stringify(users));
+                    fetchDetails()
+                }
+            }
+        }
+
+        const makeWithdraw = () =>{
+            let currentUser = localStorage.getItem("currentUser")  
+            let myAmount = withdrawAmount.value;
+            if(currentUser){
+                let users = JSON.parse(localStorage.getItem("users"));
+                let index = users.findIndex(u => u.uEmail == currentUser);
+                let myBalance = users[index].balance
+                if(myAmount <= myBalance){
+                    if(confirm('are you sure')){
+                    users[index].balance = parseFloat(users[index].balance) - parseFloat(myAmount);
+                    localStorage.setItem('users', JSON.stringify(users));
+                    fetchDetails()
+                }
+                (withdrawAmount.value = "")
+                }else( alert("insufficient"))
+            }
+        }
+
+        const makeTransfer = () =>{
+            let amount = trfAmount.value; 
+            let account = trfAccount.value;
+            // alert("make teansfer")
+            let currentUser = localStorage.getItem('currentUser')
+            if(currentUser){
+                if(confirm("Are you sure you want to make this transfer?")){
+                let users = JSON.parse(localStorage.getItem("users"))
+                let index = users.findIndex(u => u.uEmail == currentUser);
+                let balance = users[index].balance;
+                let myAccount = users[index].accountNo;
+                if(myAccount == account){
+                    alert("you can not transfer to your self")
+                    return
+                }
+                if(balance >= amount){
+                    let trfIndex = users.findIndex(u => u.accountNo == account);
+                    if(trfIndex < 0){ 
+                        alert("invalid account")
+                    }else{
+                        users[trfIndex].balance = parseFloat(users[trfIndex].balance) + parseFloat(amount);
+                        users[index].balance = parseFloat(users[index].balance) - parseFloat(amount);
+                        localStorage.setItem('users', JSON.stringify(users));
+                        fetchDetails();
+                        alert("transfer successfully")
+
+                    }
+                }else{ 
+                    alert("insufficient balance")
+                } 
+                }
+                }
+            }
+            // confirm("are you suure")
+        
+        const checkAccount = ()=>{
+            let account = trfAccount.value;
+            if(account.length == 10){
+                let users = JSON.parse(localStorage.getItem('users'));
+                let index = users.findIndex(u => u.accountNo == account)
+                if(index < 0){
+                    trfName.innerHTML = 'Invalid';
+                    document.getElementById('trfName').style.color = "red"
+                }else{
+                    trfName.innerText = users[index].uName;
+                    trfName.style.color = "green"
+                }
+            }
+
+        }
+    </script>
+</body>
+</html>

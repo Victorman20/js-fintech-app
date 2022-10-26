@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+    <style>
+        body { 
+            background-color: black;
+            background-image: url(midia/signup.jpg);
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 90vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-5 mx-auto">
+                <h1 style="color:#157347;">Welcome to Mercy Bank</h1>
+                <p>Register your account</p>
+                <input class="form-control mt-2" type="text" placeholder="Input surname" id="fullnameInp">
+                <input class="form-control mt-2" type="text" placeholder="Input middlename" id="lastname">
+                <input class="form-control mt-2" type="text" placeholder="Input lastname" id="middlename">
+                <input class="form-control mt-2" type="text" placeholder="Input your home address" id="addInp">
+                <input class="form-control mt-2" type="text" placeholder="Input phone number" id="noInp">
+                <input class="form-control mt-2" type="text" placeholder="Input Email" id="mailInp">
+                <div id="disp"></div>
+                <input class="form-control mt-2" type="password" placeholder="Input Password" id="passInp"><br>
+                <button style="width: 150px;" class="btn btn-success mx-2" onclick="regAcct()">Signup</button> <span class="text-light">Already have account? <a style="color:#BED7DE;" class="fs-5" href="signin.html">Sign in here</a></span>
+            </div>
+        </div>
+    </div>
+    <script>
+const info = document.querySelector(".alert-info");
+
+function process(event) {
+ event.preventDefault();
+
+ const phoneNumber = phoneInput.getNumber();
+
+ info.style.display = "";
+ info.innerHTML = `Phone number in E.164 format: <strong>${phoneNumber}</strong>`;
+}
+    </script>
+    <script>
+        usersArray = []
+        let checkRegrex = /^([\w]{1,})([@])([\w]+)([.])([\w]{2,})([.][\w]+)?$/
+        const regAcct = ()=>{
+            usersArray.length = 0;
+            var uName = fullnameInp.value;
+            var uAddress = addInp.value;
+            var uNumber = noInp.value;
+            var uEmail = mailInp.value;
+            var uPassword = passInp.value;
+            var balance = 0
+
+            var accountNo = Math.round(Math.random() * 10000000000)
+
+            var userObj = {uName, uAddress, uNumber, uEmail, uPassword, accountNo, balance}
+            // if((uEmail = mailInp.value), (uPassword = passInp.value)){
+            //     window.location.href = "signin.html"
+            // }
+            // if(usersArray.push(userObj)){
+                // }
+
+                var getLocal = JSON.parse(localStorage.getItem("users"))
+                if(getLocal){
+                    usersArray = getLocal;
+                }
+                if((uName = fullnameInp.value) && (uAddress = addInp.value) && (uNumber = noInp.value) && !checkRegrex.test(mailInp.value) && (uPassword = passInp.value)){
+                    mailInp.className = "form-control is-invalid"
+                    disp.innerHTML = `<small class="text-danger">Enter valid email</small>`
+                    alert("Input valid email address to continue")
+                }else if((fullnameInp.value == "") ||
+                    (addInp.value == "") ||
+                    (noInp.value == "") ||
+                    (mailInp.value == "") ||
+                   ( passInp.value == "")){
+                    alert("Complete your Details")
+                }else if((fullnameInp.value), (addInp.value), (noInp.value), (mailInp.value), (passInp.value)){
+                window.location.href = "signin.html",
+                usersArray.push(userObj)
+                    localStorage.setItem("users", JSON.stringify(usersArray));
+                    fullnameInp.value = "",
+                    addInp.value = "",
+                    noInp.value = "",
+                    mailInp.value = "",
+                    passInp.value = ""
+                    alert("You have successfuly sign up on the system, kindly proceed to sign in")
+                }
+                
+                }
+
+            // if(getLocal){
+                //     usersArray.push(getLocal);
+                // }
+                
+            
+            </script>
+</body>
+</html>
